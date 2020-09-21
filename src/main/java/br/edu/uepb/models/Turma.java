@@ -5,6 +5,9 @@ public class Turma {
     private String nome;
     private String turno;
 
+    public Turma(){
+    }
+
     public void setId(int id) {
         this.id = id;
     }

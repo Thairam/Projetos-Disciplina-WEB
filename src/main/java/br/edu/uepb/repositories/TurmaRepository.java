@@ -23,6 +23,15 @@ public class TurmaRepository {
         turmas.put(turma.getId(), turma);
     }
 
+    public void delete(int id) {
+		turmas.remove(id);
+	}
+
+	public void edit(Turma turma) {
+		turmas.remove(turma.getId());
+		turmas.put(turma.getId(), turma);
+	}
+
     private int generateId(final int possible) {
         if (turmas.containsKey(possible))
             return generateId(possible + 1);

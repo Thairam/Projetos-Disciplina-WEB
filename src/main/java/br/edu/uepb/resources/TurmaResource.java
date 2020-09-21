@@ -3,8 +3,10 @@ package br.edu.uepb.resources;
 import br.edu.uepb.models.Turma;
 import br.edu.uepb.repositories.TurmaRepository;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -25,7 +27,12 @@ public class TurmaResource {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getTurmaById(@PathParam("id") int id) {
-        return Response.ok(turmaRepository.getById(id)).build();
+		Turma turma = turmaRepository.getById(id);
+
+		if (turma == null)
+			return Response.status(Response.Status.NOT_FOUND).build();
+
+        return Response.ok(turma).build();
     }
 
     @POST
@@ -35,4 +42,37 @@ public class TurmaResource {
         turmaRepository.create(turma);
         return Response.status(Response.Status.CREATED).entity(turma).build();
     }
+
+    @PUT
+	@Path("{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response editTurma(@PathParam("id") int id, Turma turma) {
+		Turma turmaBuscada = turmaRepository.getById(id);
+		if (turmaBuscada == null)
+			return Response.status(Response.Status.NOT_FOUND).build();
+		try {
+			turma.setId(id);
+			turmaRepository.edit(turma);
+			return Response.ok(turma).build();
+		} catch (Exception ex) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.getMessage()).build();
+		}
+	}
+
+	@DELETE
+	@Path("{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response deleteTurma(@PathParam("id") int id) {
+		Turma turma = turmaRepository.getById(id);
+		if (turma == null)
+			return Response.status(Response.Status.NOT_FOUND).build();
+		try {
+			turmaRepository.delete(turma.getId());
+			return Response.noContent().build();
+		} catch (Exception ex) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.getMessage()).build();
+		}
+	}
 }
